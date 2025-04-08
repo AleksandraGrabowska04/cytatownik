@@ -1,7 +1,13 @@
+{% load custom_tags %}
 <!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    {% load static %}
+    <script src="{% static 'quote/js/jquery.highlight.js' %}"></script>
+    <script src="{% static 'quote/js/home.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'quote/css/quotes.css' %}">
     <title>Cytatownik</title>
 </head>
 <body>
@@ -18,23 +24,44 @@
     {% else %}
         <p><a href="{% url 'login' %}">Zaloguj się, aby dodać cytat</a></p>
     {% endif %}
+    <form method="GET">
+        {{ search_form.as_p }}
+        <button type="submit">Szukaj</button>
+    </form>
+    <div id="quotes">
+        {% for quote in quotes %}
+            <div>
+                <blockquote class="quote-text">“{{ quote.text }}”</blockquote>
+                <p>— <strong>{{ quote.author }}</strong> ({{ quote.category }})</p>
 
-    {% for quote in quotes %}
-        <div>
-            <blockquote>“{{ quote.text }}”</blockquote>
-            <p>— <strong>{{ quote.author }}</strong> ({{ quote.category }})</p>
-
-            {% if request.user == quote.user %}
-                <p>
-                    <a href="{% url 'edit_quote' quote.id %}">Edytuj</a> |
-                    <a href="{% url 'delete_quote' quote.id %}">Usuń</a>
-                </p>
+                {% if request.user == quote.user %}
+                    <p>
+                        <a href="{% url 'edit_quote' quote.id %}">Edytuj</a> |
+                        <a href="{% url 'delete_quote' quote.id %}">Usuń</a>
+                    </p>
+                {% endif %}
+                <hr>
+            </div>
+        {% empty %}
+            <p>Brak cytatów do wyświetlenia.</p>
+        {% endfor %}
+    </div>
+    <div class="pagination">
+        <span class="step-links">
+            {% if quotes.has_previous %}
+                <a href="?{% url_replace page=1 %}">&laquo; Pierwsza strona</a><br>
+                <a href="?{% url_replace page=quotes.previous_page_number %}">&lt;&lt;</a>
             {% endif %}
-            <hr>
-        </div>
-    {% empty %}
-        <p>Brak cytatów do wyświetlenia.</p>
-    {% endfor %}
+    
+            <span class="current">
+                Strona {{ quotes.number }} / {{ quotes.paginator.num_pages }}
+            </span>
+    
+            {% if quotes.has_next %}
+                <a href="?{% url_replace page=quotes.next_page_number %}">&gt;&gt;</a>
+            {% endif %}
+        </span>
+    </div>
 
 </body>
 </html>

@@ -14,3 +14,8 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
+
+class QuoteSearchForm(forms.Form):
+    text = forms.CharField(max_length=100, required=False, label='Zawiera tekst')
+    author = forms.CharField(max_length=100, required=False, label='Autor')
+    category = forms.CharField(max_length=50, required=False, label='Kategoria')
