@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Cytatownik</title>
+</head>
+<body>
+    <h1>📚 Cytatownik</h1>
+
+    {% if request.user.is_authenticated %}
+    <p>👋 Witaj, {{ request.user.username }} | <a href="{% url 'logout' %}">Wyloguj się</a></p>
+    {% else %}
+    <p><a href="{% url 'login' %}">Zaloguj się</a> | <a href="{% url 'register' %}">Zarejestruj się</a></p>
+    {% endif %}
+
+    {% if request.user.is_authenticated %}
+        <p><a href="{% url 'add_quote' %}">➕ Dodaj cytat</a></p>
+    {% else %}
+        <p><a href="{% url 'login' %}">Zaloguj się, aby dodać cytat</a></p>
+    {% endif %}
+
+    {% for quote in quotes %}
+        <div>
+            <blockquote>“{{ quote.text }}”</blockquote>
+            <p>— <strong>{{ quote.author }}</strong> ({{ quote.category }})</p>
+
+            {% if request.user == quote.user %}
+                <p>
+                    <a href="{% url 'edit_quote' quote.id %}">Edytuj</a> |
+                    <a href="{% url 'delete_quote' quote.id %}">Usuń</a>
+                </p>
+            {% endif %}
+            <hr>
+        </div>
+    {% empty %}
+        <p>Brak cytatów do wyświetlenia.</p>
+    {% endfor %}
+
+</body>
+</html>

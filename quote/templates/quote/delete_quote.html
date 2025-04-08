@@ -1,0 +1,10 @@
+<h1>🗑️ Usuń cytat</h1>
+<p>Czy na pewno chcesz usunąć cytat:</p>
+<blockquote>“{{ quote.text }}” — {{ quote.author }}</blockquote>
+
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit">Tak, usuń</button>
+</form>
+
+<p><a href="{% url 'home' %}">← Anuluj</a></p>
