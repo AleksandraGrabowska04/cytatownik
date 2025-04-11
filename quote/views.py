@@ -8,6 +8,28 @@ from django.core.paginator import Paginator
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 
+@login_required
+def my_quotes(request):
+    form = QuoteSearchForm(request.GET)
+    quotes = Quote.objects.filter(user=request.user).order_by('-id')
+
+    if form.is_valid():
+        text = form.cleaned_data.get('text')
+        author = form.cleaned_data.get('author')
+        category = form.cleaned_data.get('category')
+
+        if text:
+            quotes = quotes.filter(text__icontains=text)
+        if author:
+            quotes = quotes.filter(author__icontains=author)
+        if category:
+            quotes = quotes.filter(category__icontains=category)
+
+    return render(request, 'quote/my_quotes.html', {
+        'quotes': quotes,
+        'search_form': form
+    })
+
 def home(request):
     quotes = Quote.objects.all().order_by('-id')
 

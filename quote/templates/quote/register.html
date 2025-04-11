@@ -1,7 +1,29 @@
-<h2>📝 Rejestracja</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Zarejestruj się</button>
-</form>
-<a href="{% url 'login' %}">Masz konto? Zaloguj się</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/minty/bootstrap.min.css">
+</head>
+<body class="bg-body-tertiary">
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card p-4 shadow" style="max-width: 400px; width: 100%;">
+        <h2 class="text-center mb-4">📝 Register</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary w-100">Create account</button>
+        </form>
+
+        <hr class="my-3">
+        <p class="text-center">
+            Already have an account? <a href="{% url 'login' %}" class="text-decoration-none">Log in here</a>
+        </p>
+    </div>
+</div>
+
+</body>
+</html>

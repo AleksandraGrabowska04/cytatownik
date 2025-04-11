@@ -1,7 +1,29 @@
-<h2>🔐 Logowanie</h2>
-<form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Zaloguj się</button>
-</form>
-<a href="{% url 'register' %}">Nie masz konta? Zarejestruj się</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/minty/bootstrap.min.css">
+</head>
+<body class="bg-body-tertiary">
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <div class="card p-4 shadow" style="max-width: 400px; width: 100%;">
+        <h2 class="text-center mb-4">🔐 Log in</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success w-100">Log in</button>
+        </form>
+
+        <hr class="my-3">
+        <p class="text-center">
+            Don't have an account yet? <a href="{% url 'register' %}" class="text-decoration-none">Register here</a>
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
