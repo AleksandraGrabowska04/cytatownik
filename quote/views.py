@@ -7,6 +7,14 @@ from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import AuthenticationForm
+from .utils import generate_quote
+
+def quote_generator(request):
+    quote = None
+    if request.method == 'POST':
+        user_feeling = request.POST.get('user_feeling')
+        quote = generate_quote(user_feeling)
+    return render(request, "quote/quote_generator.html", {"quote": quote})
 
 @login_required
 def my_quotes(request):

@@ -1,0 +1,24 @@
+<head>
+    <meta charset="UTF-8">
+    <title>AI quote generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS: Minty theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/minty/bootstrap.min.css">
+</head>
+<body>
+
+    <form method="post">
+        {% csrf_token %}
+        <label for="feeling">How do you feel today?</label>
+        <input type="text" name="user_feeling" id="feeling" required>
+        <button type="submit">Get a Quote</button>
+    </form>
+
+    {% if quote %}
+        <h2>Your Quote:</h2>
+        <p>{{ quote }}</p>
+        <footer>model: Falcon-7B-instruct, creator: Technology Innovation Institute</footer>
+    {% endif %}
+
+</body>
