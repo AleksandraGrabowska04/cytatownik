@@ -26,3 +26,5 @@ def generate_quote(user_feeling):
         return generated.strip()
     except Exception as e:
         return f"Oops! Couldn't generate a quote. ({e})"
+    
+#maybe summarize category of the quote function here (by ai too)? 

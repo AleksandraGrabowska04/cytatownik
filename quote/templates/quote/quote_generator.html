@@ -17,8 +17,24 @@
 
     {% if quote %}
         <h2>Your Quote:</h2>
-        <p>{{ quote }}</p>
+        <blockquote>{{ quote }}</blockquote>
         <footer>model: Falcon-7B-instruct, creator: Technology Innovation Institute</footer>
+
+        {% if user.is_authenticated %}
+            <form method="POST">
+                {% csrf_token %}
+                <!-- Hidden fields to carry over data -->
+                <input type="hidden" name="user_feeling" value="{{ user_feeling }}">
+                <input type="hidden" name="generated_quote" value="{{ quote }}">
+                <button type="submit" name="save_quote">Submit this quote</button>
+            </form>
+        {% else %}
+            <p><a href="{% url 'login' %}">Log in</a> to submit generated quotes.</p>
+        {% endif %}
     {% endif %}
+
+    <p class="mt-3 text-center">
+        <a href="{% url 'home' %}" class="text-decoration-none">← Back to home</a>
+    </p>
 
 </body>

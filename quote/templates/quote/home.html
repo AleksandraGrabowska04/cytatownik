@@ -40,6 +40,8 @@
     {% else %}
         <p><a href="{% url 'login' %}">Log in to add a quote</a></p>
     {% endif %}
+    <br>
+    <a class="btn btn-outline-success mb-3" href="{% url 'quote_generator' %}">➕ Generate quote using AI</a>
 
     <!-- Search form -->
     <form method="GET" class="mb-4 p-4 bg-white border rounded shadow-sm">

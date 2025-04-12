@@ -10,10 +10,31 @@ from django.contrib.auth.forms import AuthenticationForm
 from .utils import generate_quote
 
 def quote_generator(request):
+    
     quote = None
+
     if request.method == 'POST':
+
         user_feeling = request.POST.get('user_feeling')
+        #some kind of check here to see if user tries to write something else than mood
+        #like: "ignore previous prompt", either by making ai itself check it before
+        #printing quote (more ambitious way) or search for keyword, and then send
+        #user somewhere/refresh the page with message if user did so.
         quote = generate_quote(user_feeling)
+
+        if 'save_quote' in request.POST and request.user.is_authenticated:
+            quote = request.POST.get('generated_quote')
+            Quote.objects.create(
+                author='Falcon-7B-instruct', #add it somewhere as imported "const" maybe?
+                text=quote,
+                category=user_feeling, #change this later, either by striping from "I feel" - if user user added any, or somehow else.
+                user=request.user
+            )
+            return redirect('my_quotes')
+        
+        else:
+            quote = generate_quote(user_feeling)
+        
     return render(request, "quote/quote_generator.html", {"quote": quote})
 
 @login_required
@@ -71,7 +92,7 @@ def add_quote(request):
             quote = form.save(commit=False)
             quote.user = request.user  
             quote.save()
-            return redirect('home')
+            return redirect('home') #change it to my_quotes?
     else:
         form = QuoteForm()
     return render(request, 'quote/add_quote.html', {'form': form})
