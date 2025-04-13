@@ -9,7 +9,7 @@ def generate_quote(user_feeling):
     }
     randomizer = random.randint(1, 99)
     payload = {
-        "inputs": f"Come up with an short wise saying of your own for someone who says they feel: \"{user_feeling}\" Don't use anyone else's quote, come with your own {randomizer*"."}",
+        "inputs": f'Come up with an short wise saying of your own for someone who says they feel: \"{user_feeling}\" Don\'t use anyone else\'s quote, come with your own {randomizer*"."}',
         "parameters": {
             "temperature": 0.65,
             "max_new_tokens": 50,

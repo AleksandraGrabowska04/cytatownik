@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import Quote
-from .forms import QuoteForm, RegisterForm, QuoteSearchForm
+from .models import Quote, Comment
+from .forms import QuoteForm, CommentForm, RegisterForm, QuoteSearchForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from django.shortcuts import get_object_or_404
@@ -62,6 +62,10 @@ def my_quotes(request):
 def home(request):
     quotes = Quote.objects.all().order_by('-id')
 
+    comments = []
+    for quote in quotes:
+        comments.append(quote.comments.all())
+
     search_form = QuoteSearchForm(request.GET)
     if search_form.is_valid():
         filter_text = search_form.cleaned_data.get('text', None)
@@ -81,6 +85,7 @@ def home(request):
     context = {
         'quotes': page_obj,
         'search_form': search_form,
+        'comments': comments,
     }
     return render(request, 'quote/home.html', context)
 
@@ -121,6 +126,31 @@ def delete_quote(request, quote_id):
         quote.delete()
         return redirect('home')
     return render(request, 'quote/delete_quote.html', {'quote': quote})
+
+@login_required
+def add_comment(request, quote_id):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        quote = get_object_or_404(Quote, id=quote_id)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.quote = quote
+            comment.save()
+            return redirect('home')
+    else:
+        form = CommentForm()
+    return render(request, 'quote/add_comment.html', {'form': form})
+
+@login_required
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    if comment.user != request.user:
+        return HttpResponseForbidden("Nie masz uprawnień do usunięcia tego komentarza.")
+    if request.method == 'POST':
+        comment.delete()
+        return redirect('home')
+    return render(request, 'quote/delete_comment.html', {'comment': comment})
 
 def register_view(request):
     if request.method == 'POST':
