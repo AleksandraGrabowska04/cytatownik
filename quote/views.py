@@ -42,6 +42,10 @@ def my_quotes(request):
     form = QuoteSearchForm(request.GET)
     quotes = Quote.objects.filter(user=request.user).order_by('-id')
 
+    comments = []
+    for quote in quotes:
+        comments.append(quote.comments.all())
+
     if form.is_valid():
         text = form.cleaned_data.get('text')
         author = form.cleaned_data.get('author')
@@ -56,7 +60,8 @@ def my_quotes(request):
 
     return render(request, 'quote/my_quotes.html', {
         'quotes': quotes,
-        'search_form': form
+        'search_form': form,
+        'comments': comments,
     })
 
 def home(request):
