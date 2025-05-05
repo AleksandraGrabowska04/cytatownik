@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from .models import Quote, Comment
+from .models import Quote, Comment, Vote, VoteType
 from .forms import QuoteForm, CommentForm, RegisterForm, QuoteSearchForm
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.contrib.auth import login, logout, authenticate
@@ -59,6 +59,12 @@ def my_quotes(request):
         'search_form': form,
         'comments': comments,
     })
+class VoteCounts:
+    def __init__(self, quote_id, heart, curious, skull):
+        self.quote_id = quote_id
+        self.heart = heart
+        self.curious = curious
+        self.skull = skull
 
 def home(request):
     quotes = Quote.objects.all().order_by('-id')
@@ -152,6 +158,45 @@ def delete_comment(request, comment_id):
         comment.delete()
         return redirect('home')
     return render(request, 'quote/delete_comment.html', {'comment': comment})
+
+def get_vote_counts_json(quote):
+    heart_count = Vote.objects.filter(quote=quote, typ=VoteType.HEART).count()
+    curious_count = Vote.objects.filter(quote=quote, typ=VoteType.CURIOUS).count()
+    skull_count = Vote.objects.filter(quote=quote, typ=VoteType.SKULL).count()
+
+    vote_counts = {
+        "heart": heart_count,
+        "curious": curious_count,
+        "skull": skull_count,
+    }
+    return vote_counts
+
+@login_required
+def toggle_vote(request):
+    if request.method == 'POST':
+        quote_id = request.POST.get('quote_id')
+        vote_type = request.POST.get('vote_type')
+        if not quote_id or not vote_type:
+            return JsonResponse({"error": "Invalid request"}, status=400)
+        
+        if vote_type not in ["HR", "CR", "SK"]:
+            return JsonResponse({"error": "Invalid vote type"}, status=400)
+        
+        quote = get_object_or_404(Quote, id=quote_id)
+        existing_vote = Vote.objects.filter(quote=quote, user=request.user).first()
+        is_removing = False
+        if existing_vote:
+            if existing_vote.typ == vote_type:
+                is_removing = True
+            existing_vote.delete()
+        if is_removing:
+            return JsonResponse(get_vote_counts_json(quote))
+        
+        if vote_type in VoteType.values:
+            vote = Vote.objects.create(quote=quote, user=request.user, typ=vote_type)
+            vote.save()
+            return JsonResponse(get_vote_counts_json(quote))
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 def register_view(request):
     if request.method == 'POST':

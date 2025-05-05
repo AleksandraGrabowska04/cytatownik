@@ -6,8 +6,18 @@
     <title>QuoteBook</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- Bootstrap CSS: Minty theme -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.3/dist/minty/bootstrap.min.css">
+
+    <style>
+        .quote-vote-counts a {
+            text-decoration: none;
+        }
+        .nohover {
+            pointer-events: none;
+        }
+    </style>
 </head>
 <body class="bg-body text-dark">
 
@@ -53,6 +63,25 @@
         <a href="{% url 'home' %}" class="btn btn-outline-secondary mb-3">🔙 Back to all quotes</a>
     {% endif %}
 
+    <script>
+        function applyVote(quoteId, voteType) {
+            $.ajax({
+                url: "{% url 'vote' %}",
+                type: "POST",
+                data: {
+                    'quote_id': quoteId,
+                    'vote_type': voteType,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    $('#heart-count-' + quoteId).text("💗 " + response.heart);
+                    $('#curious-count-' + quoteId).text("🤔 " + response.curious);
+                    $('#skull-count-' + quoteId).text("💀 " + response.skull);
+                }
+            });
+        }
+    </script>
+
     <!-- Quote list -->
     {% for quote in quotes %}
         <div class="card mb-4 border-0 shadow-sm bg-light">
@@ -62,6 +91,20 @@
                     — <strong>{{ quote.author }}</strong>
                     <em class="ms-1">({{ quote.category }})</em>
                 </p>
+                <!-- Post voting -->
+                <div class="mb-0 mt-2 text-end text-muted quote-vote-counts">
+                    <a onclick="applyVote({{quote.id}}, 'HR')" href="javascript:void(0);"
+                    class="mb-0 text-end h5 {% if not request.user.is_authenticated %} nohover{% endif %}"
+                    id="heart-count-{{quote.id}}">💗 {{ quote.vote_counts.Heart }}</a>
+
+                    <a onclick="applyVote({{quote.id}}, 'CR')" href="javascript:void(0);"
+                    class="mb-0 text-end h5 {% if not request.user.is_authenticated %} nohover{% endif %}"
+                    id="curious-count-{{quote.id}}">🤔 {{ quote.vote_counts.Curious }}</a>
+
+                    <a onclick="applyVote({{quote.id}}, 'SK')" href="javascript:void(0);"
+                    class="mb-0 text-end h5 {% if not request.user.is_authenticated %} nohover{% endif %}"
+                    id="skull-count-{{quote.id}}">💀 {{ quote.vote_counts.Skull }}</a>
+                </div>
 
                 {% if request.user == quote.user %}
                     <div class="mt-3 d-flex gap-2">

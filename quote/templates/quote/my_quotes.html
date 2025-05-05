@@ -72,6 +72,12 @@
                     — <strong>{{ quote.author }}</strong>
                     <em class="ms-1">({{ quote.category }})</em>
                 </p>
+                <!-- Post voting -->
+                <div class="mb-0 mt-2 text-end text-muted quote-vote-counts">
+                    <a class="mb-0 text-end h5" id="heart-count-{{quote.id}}">💗 {{ quote.vote_counts.Heart }}</a>
+                    <a class="mb-0 text-end h5" id="curious-count-{{quote.id}}">🤔 {{ quote.vote_counts.Curious }}</a>
+                    <a class="mb-0 text-end h5" id="skull-count-{{quote.id}}">💀 {{ quote.vote_counts.Skull }}</a>
+                </div>
 
                 <div class="mt-3 d-flex gap-2">
                     <a href="{% url 'edit_quote' quote.id %}" class="btn btn-sm btn-outline-warning">Edit</a>

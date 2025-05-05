@@ -8,6 +8,7 @@ urlpatterns = [
     path('dodaj/', views.add_quote, name='add_quote'),
     path('edytuj/<int:quote_id>/', views.edit_quote, name='edit_quote'),
     path('usun/<int:quote_id>/', views.delete_quote, name='delete_quote'),
+    path('vote/', views.toggle_vote, name='vote'),
 
     path('dodaj_komentarz/<int:quote_id>', views.add_comment, name='add_comment'),
     path('usun_komentarz/<int:comment_id>', views.delete_comment, name='delete_comment'),
