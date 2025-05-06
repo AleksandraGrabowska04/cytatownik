@@ -1,3 +1,6 @@
+## Documentation
+Documentation can be found in documentation.pdf (in polish).
+
 ## AI quote generator
 
 In order to be able to use the AI quote generator, you need to get your own user access API token from the huggingface website: [https://huggingface.co/settings/tokens](https://huggingface.co/settings/tokens).
